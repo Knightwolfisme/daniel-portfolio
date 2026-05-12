@@ -49,6 +49,23 @@ body::after {
   left: var(--cx, 50%);
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  top: calc(var(--cy, 50%) - 14px);
+  left: calc(var(--cx, 50%) - 14px);
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(201,168,76,0.5);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transform: rotate(-20deg);
+  pointer-events: none;
+  z-index: 9998;
+  transition:
+    transform 0.15s ease,
+    border-color 0.3s ease;
+}
+
 .section-label {
   display: block;
   font-family: var(--font-body);
