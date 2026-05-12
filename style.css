@@ -33,49 +33,69 @@ body {
   cursor: none;
 }
 
-/* Custom cursor */
+/* ===========================
+   CUSTOM CURSOR
+=========================== */
+
+/* Hide default cursor */
+body {
+  cursor: none;
+}
+
+/* Gold center dot */
 body::after {
   content: '';
+
   position: fixed;
-  width: 10px;
-  height: 10px;
-  background: var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease;
   top: var(--cy, 50%);
   left: var(--cx, 50%);
+
+  width: 10px;
+  height: 10px;
+
+  background: var(--gold);
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  pointer-events: none;
+  z-index: 9999;
+
+  box-shadow:
+    0 0 10px rgba(201,168,76,0.5),
+    0 0 20px rgba(201,168,76,0.2);
+
+  transition:
+    transform 0.08s ease,
+    background 0.3s ease;
 }
 
+/* Triangle outline */
 body::before {
   content: '';
+
   position: fixed;
+
   top: calc(var(--cy, 50%) - 14px);
   left: calc(var(--cx, 50%) - 14px);
+
   width: 28px;
   height: 28px;
-  border: 1px solid rgba(201,168,76,0.5);
+
+  border: 1px solid rgba(201,168,76,0.55);
+
   clip-path: polygon(0 0, 100% 50%, 0 100%);
+
   transform: rotate(-20deg);
+
   pointer-events: none;
   z-index: 9998;
+
   transition:
-    transform 0.15s ease,
-    border-color 0.3s ease;
+    transform 0.12s ease,
+    border-color 0.3s ease,
+    opacity 0.3s ease;
 }
-
-.section-label {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 2rem;
-}
-
 /* ===========================
    HERO
 =========================== */
