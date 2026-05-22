@@ -15,62 +15,110 @@ function drawKintsugi() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // Spawn points around the edges + a few internal nodes
-  // Cracks travel between these, forming enclosed regions
-  function edgePoint() {
-    const edge = Math.floor(Math.random() * 4);
-    if (edge === 0) return { x: Math.random() * W, y: 0 };
-    if (edge === 1) return { x: W, y: Math.random() * H };
-    if (edge === 2) return { x: Math.random() * W, y: H };
-    return { x: 0, y: Math.random() * H };
+  // Force nodes into a grid-like spread so cracks cover the whole canvas
+  // then nudge each one randomly so it doesn't look mechanical
+  function spreadNodes() {
+    const nodes = [];
+    const cols = 4, rows = 3;
+    const cellW = W / cols;
+    const cellH = H / rows;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        nodes.push({
+          x: cellW * c + cellW * (0.2 + Math.random() * 0.6),
+          y: cellH * r + cellH * (0.2 + Math.random() * 0.6)
+        });
+      }
+    }
+
+    // Add 4 edge entry points so cracks bleed to screen edges
+    nodes.push({ x: Math.random() * W,  y: 0 });
+    nodes.push({ x: Math.random() * W,  y: H });
+    nodes.push({ x: 0,                  y: Math.random() * H });
+    nodes.push({ x: W,                  y: Math.random() * H });
+
+    return nodes;
   }
 
-  // Build a set of nodes (edge + internal) that cracks connect between
-  const nodes = [];
-  for (let i = 0; i < 6; i++) nodes.push(edgePoint());
-  for (let i = 0; i < 5; i++) nodes.push({
-    x: W * 0.15 + Math.random() * W * 0.7,
-    y: H * 0.15 + Math.random() * H * 0.7
-  });
-
-  // Draw a flowing crack between two points using cubic bezier
   function drawVein(x1, y1, x2, y2, width, alpha) {
-    // Control points offset perpendicular to the line for organic curves
-    const mx = (x1 + x2) / 2;
-    const my = (y1 + y2) / 2;
-    const dx = x2 - x1;
-    const dy = y2 - y1;
+    const dx  = x2 - x1;
+    const dy  = y2 - y1;
     const len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 1) return;
 
-    // Perpendicular direction
     const px = -dy / len;
     const py =  dx / len;
 
-    // Random curve bulge
-    const bulge1 = (Math.random() - 0.5) * len * 0.45;
-    const bulge2 = (Math.random() - 0.5) * len * 0.35;
+    const b1 = (Math.random() - 0.5) * len * 0.5;
+    const b2 = (Math.random() - 0.5) * len * 0.4;
 
-    const cp1x = x1 + dx * 0.3 + px * bulge1;
-    const cp1y = y1 + dy * 0.3 + py * bulge1;
-    const cp2x = x1 + dx * 0.7 + px * bulge2;
-    const cp2y = y1 + dy * 0.7 + py * bulge2;
+    const cp1x = x1 + dx * 0.3 + px * b1;
+    const cp1y = y1 + dy * 0.3 + py * b1;
+    const cp2x = x1 + dx * 0.7 + px * b2;
+    const cp2y = y1 + dy * 0.7 + py * b2;
 
-    // --- Outer glow (wide, soft) ---
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
-    ctx.strokeStyle = "rgba(255, 200, 80, 0.12)";
-    ctx.lineWidth   = width * 7;
-    ctx.lineCap     = "round";
+    const draw = (strokeStyle, lineWidth, globalAlpha) => {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineWidth   = lineWidth;
+      ctx.lineCap     = "round";
+      ctx.globalAlpha = globalAlpha;
+      ctx.stroke();
+    };
+
+    // Layer 1: wide diffuse glow
+    draw("rgba(180, 130, 20, 0.08)",  width * 18, 1);
+    // Layer 2: mid glow
+    draw("rgba(210, 160, 40, 0.2)",   width * 7,  1);
+    // Layer 3: core gold
+    draw("#c9a84c",                   width,      alpha);
+    // Layer 4: bright hot centre
+    draw("rgba(255, 230, 130, 0.7)",  width * 0.3, alpha * 0.8);
+
     ctx.globalAlpha = 1;
-    ctx.shadowColor = "rgba(201,168,76,0.0)";
-    ctx.shadowBlur  = 0;
-    ctx.stroke();
+  }
 
-    // --- Mid glow ---
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y,
+  const nodes = spreadNodes();
+
+  // Connect nodes — each to its 2–3 nearest neighbours
+  const used = new Set();
+  nodes.forEach((a, i) => {
+    const nearest = nodes
+      .map((b, j) => ({ j, d: Math.hypot(b.x - a.x, b.y - a.y) }))
+      .filter(o => o.j !== i)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2 + Math.floor(Math.random() * 2));
+
+    nearest.forEach(({ j }) => {
+      const key = `${Math.min(i,j)}-${Math.max(i,j)}`;
+      if (used.has(key)) return;
+      used.add(key);
+
+      const b       = nodes[j];
+      const isMajor = Math.random() < 0.5;
+      const width   = isMajor ? 2.2 + Math.random() * 1.6 : 0.8 + Math.random() * 0.9;
+      const alpha   = isMajor ? 0.9 : 0.55 + Math.random() * 0.25;
+
+      drawVein(a.x, a.y, b.x, b.y, width, alpha);
+
+      // Sub-branch from midpoint ~35% of the time
+      if (Math.random() < 0.35) {
+        const mid = {
+          x: (a.x + b.x) / 2 + (Math.random() - 0.5) * 120,
+          y: (a.y + b.y) / 2 + (Math.random() - 0.5) * 120
+        };
+        const target = nodes[Math.floor(Math.random() * nodes.length)];
+        drawVein(mid.x, mid.y, target.x, target.y, width * 0.5, alpha * 0.6);
+      }
+    });
+  });
+}
+
+drawKintsugi();
+window.addEventListener("resize", drawKintsugi);
 
 /* ===========================
    CUSTOM CURSOR
