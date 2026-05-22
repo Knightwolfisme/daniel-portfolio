@@ -318,20 +318,30 @@ body::after {
 }
 
 .project {
-  width: 70vw;
-  max-width: 700px;
-  height: 65vh;
-  padding: 4rem;
-  background: var(--bg-card);
-  border: 1px solid rgba(201, 168, 76, 0.1);
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  /* your existing styles stay, add these: */
+  background-image: var(--proj-img, none);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dark overlay so text stays readable over the image */
+.project::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,    /* solid dark at bottom where text is */
+    rgba(0, 0, 0, 0.55) 50%,   /* semi-transparent mid */
+    rgba(0, 0, 0, 0.25) 100%   /* lighter at top so image shows */
+  );
+  z-index: 0;
+}
+
+/* Lift all text content above the overlay */
+.project > * {
   position: relative;
-  overflow: hidden;
-  transition: border-color 0.4s ease;
-  flex-shrink: 0;
+  z-index: 1;
 }
 
 .project::before {
