@@ -12,87 +12,65 @@ function drawKintsugi() {
   canvas.height = window.innerHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const GOLD       = "#c9a84c";
-  const GLOW       = "rgba(201, 168, 76, 0.35)";
-  const NUM_CRACKS = 7;
-  const MAX_DEPTH  = 4;
+  const W = canvas.width;
+  const H = canvas.height;
 
-  function drawCrack(x, y, angle, length, baseWidth, depth) {
-    if (depth > MAX_DEPTH || length < 10) return;
+  // Spawn points around the edges + a few internal nodes
+  // Cracks travel between these, forming enclosed regions
+  function edgePoint() {
+    const edge = Math.floor(Math.random() * 4);
+    if (edge === 0) return { x: Math.random() * W, y: 0 };
+    if (edge === 1) return { x: W, y: Math.random() * H };
+    if (edge === 2) return { x: Math.random() * W, y: H };
+    return { x: 0, y: Math.random() * H };
+  }
 
-    const segments = Math.max(6, Math.floor(length / 10));
-    const segLen   = length / segments;
+  // Build a set of nodes (edge + internal) that cracks connect between
+  const nodes = [];
+  for (let i = 0; i < 6; i++) nodes.push(edgePoint());
+  for (let i = 0; i < 5; i++) nodes.push({
+    x: W * 0.15 + Math.random() * W * 0.7,
+    y: H * 0.15 + Math.random() * H * 0.7
+  });
 
-    let cx = x, cy = y, a = angle;
+  // Draw a flowing crack between two points using cubic bezier
+  function drawVein(x1, y1, x2, y2, width, alpha) {
+    // Control points offset perpendicular to the line for organic curves
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
 
-    for (let i = 0; i < segments; i++) {
-      const t = i / segments;
+    // Perpendicular direction
+    const px = -dy / len;
+    const py =  dx / len;
 
-      // Width varies: thick near origin, tapers at tip,
-      // with random organic swells in the middle
-      const taper   = 1 - t * 0.75;
-      const swell   = 1 + (Math.random() - 0.3) * 0.5;
-      const segW    = Math.max(0.4, baseWidth * taper * swell);
+    // Random curve bulge
+    const bulge1 = (Math.random() - 0.5) * len * 0.45;
+    const bulge2 = (Math.random() - 0.5) * len * 0.35;
 
-      a += (Math.random() - 0.5) * 0.5;  // wander
-      const nx = cx + Math.cos(a) * segLen;
-      const ny = cy + Math.sin(a) * segLen;
+    const cp1x = x1 + dx * 0.3 + px * bulge1;
+    const cp1y = y1 + dy * 0.3 + py * bulge1;
+    const cp2x = x1 + dx * 0.7 + px * bulge2;
+    const cp2y = y1 + dy * 0.7 + py * bulge2;
 
-      // Glow pass (drawn wider, behind)
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(nx, ny);
-      ctx.strokeStyle  = GLOW;
-      ctx.lineWidth    = segW * 3.5;
-      ctx.lineCap      = "round";
-      ctx.globalAlpha  = 0.18;
-      ctx.shadowBlur   = 0;
-      ctx.stroke();
-
-      // Gold line
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(nx, ny);
-      ctx.strokeStyle  = GOLD;
-      ctx.lineWidth    = segW;
-      ctx.globalAlpha  = 0.55 + Math.random() * 0.35;
-      ctx.stroke();
-
-      cx = nx;
-      cy = ny;
-    }
-
+    // --- Outer glow (wide, soft) ---
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+    ctx.strokeStyle = "rgba(255, 200, 80, 0.12)";
+    ctx.lineWidth   = width * 7;
+    ctx.lineCap     = "round";
     ctx.globalAlpha = 1;
+    ctx.shadowColor = "rgba(201,168,76,0.0)";
+    ctx.shadowBlur  = 0;
+    ctx.stroke();
 
-    // Branches
-    const numBranches = depth < 2 ? 2 : 1;
-    for (let b = 0; b < numBranches; b++) {
-      const t       = 0.3 + Math.random() * 0.5;
-      const bx      = x + Math.cos(angle) * length * t;
-      const by      = y + Math.sin(angle) * length * t;
-      const bAngle  = angle + (Math.random() > 0.5 ? 1 : -1) * (0.35 + Math.random() * 0.55);
-      const bLen    = length * (0.4 + Math.random() * 0.35);
-      // Branch width inherits from parent but thinner
-      const bWidth  = baseWidth * (0.45 + Math.random() * 0.25);
-      drawCrack(bx, by, bAngle, bLen, bWidth, depth + 1);
-    }
-  }
-
-  for (let i = 0; i < NUM_CRACKS; i++) {
-    const x      = Math.random() * canvas.width;
-    const y      = Math.random() * canvas.height;
-    const angle  = Math.random() * Math.PI * 2;
-    const length = 180 + Math.random() * 280;
-    // Bold variation: some cracks are chunky (4–6px), some hairline (1–2px)
-    const width  = Math.random() < 0.4
-                   ? 3.5 + Math.random() * 2.5   // bold crack
-                   : 0.8 + Math.random() * 1.2;  // fine crack
-    drawCrack(x, y, angle, length, width, 0);
-  }
-}
-
-drawKintsugi();
-window.addEventListener("resize", drawKintsugi);
+    // --- Mid glow ---
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y,
 
 /* ===========================
    CUSTOM CURSOR
