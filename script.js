@@ -12,70 +12,87 @@ function drawKintsugi() {
   canvas.height = window.innerHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const GOLD        = "#c9a84c";
-  const GLOW_COLOR  = "rgba(201, 168, 76, 0.4)";
-  const NUM_CRACKS  = 6;   // main crack origins
-  const MAX_DEPTH   = 4;   // branching depth
+  const GOLD       = "#c9a84c";
+  const GLOW       = "rgba(201, 168, 76, 0.35)";
+  const NUM_CRACKS = 7;
+  const MAX_DEPTH  = 4;
 
-  function drawCrack(x, y, angle, length, width, depth) {
-    if (depth > MAX_DEPTH || length < 8) return;
+  function drawCrack(x, y, angle, length, baseWidth, depth) {
+    if (depth > MAX_DEPTH || length < 10) return;
 
-    // Organic jitter along the path
-    const segments = Math.floor(length / 12);
+    const segments = Math.max(6, Math.floor(length / 10));
     const segLen   = length / segments;
 
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-
     let cx = x, cy = y, a = angle;
+
     for (let i = 0; i < segments; i++) {
-      a += (Math.random() - 0.5) * 0.45;   // slight direction wander
-      cx += Math.cos(a) * segLen;
-      cy += Math.sin(a) * segLen;
-      ctx.lineTo(cx, cy);
+      const t = i / segments;
+
+      // Width varies: thick near origin, tapers at tip,
+      // with random organic swells in the middle
+      const taper   = 1 - t * 0.75;
+      const swell   = 1 + (Math.random() - 0.3) * 0.5;
+      const segW    = Math.max(0.4, baseWidth * taper * swell);
+
+      a += (Math.random() - 0.5) * 0.5;  // wander
+      const nx = cx + Math.cos(a) * segLen;
+      const ny = cy + Math.sin(a) * segLen;
+
+      // Glow pass (drawn wider, behind)
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(nx, ny);
+      ctx.strokeStyle  = GLOW;
+      ctx.lineWidth    = segW * 3.5;
+      ctx.lineCap      = "round";
+      ctx.globalAlpha  = 0.18;
+      ctx.shadowBlur   = 0;
+      ctx.stroke();
+
+      // Gold line
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(nx, ny);
+      ctx.strokeStyle  = GOLD;
+      ctx.lineWidth    = segW;
+      ctx.globalAlpha  = 0.55 + Math.random() * 0.35;
+      ctx.stroke();
+
+      cx = nx;
+      cy = ny;
     }
 
-    // Glow pass
-    ctx.shadowColor  = GLOW_COLOR;
-    ctx.shadowBlur   = 8;
-    ctx.strokeStyle  = GOLD;
-    ctx.lineWidth    = width;
-    ctx.lineCap      = "round";
-    ctx.lineJoin     = "round";
-    ctx.globalAlpha  = 0.55 + Math.random() * 0.3;
-    ctx.stroke();
-
-    // Reset shadow for sub-cracks
-    ctx.shadowBlur  = 0;
     ctx.globalAlpha = 1;
 
-    // Branch 1–2 times along this crack
-    const branches = depth < 2 ? 2 : 1;
-    for (let b = 0; b < branches; b++) {
-      const t        = 0.35 + Math.random() * 0.45;
-      const bx       = x + Math.cos(a) * length * t;
-      const by       = y + Math.sin(a) * length * t;
-      const bAngle   = a + (Math.random() > 0.5 ? 1 : -1) * (0.4 + Math.random() * 0.5);
-      const bLength  = length * (0.45 + Math.random() * 0.3);
-      const bWidth   = width * 0.6;
-      drawCrack(bx, by, bAngle, bLength, bWidth, depth + 1);
+    // Branches
+    const numBranches = depth < 2 ? 2 : 1;
+    for (let b = 0; b < numBranches; b++) {
+      const t       = 0.3 + Math.random() * 0.5;
+      const bx      = x + Math.cos(angle) * length * t;
+      const by      = y + Math.sin(angle) * length * t;
+      const bAngle  = angle + (Math.random() > 0.5 ? 1 : -1) * (0.35 + Math.random() * 0.55);
+      const bLen    = length * (0.4 + Math.random() * 0.35);
+      // Branch width inherits from parent but thinner
+      const bWidth  = baseWidth * (0.45 + Math.random() * 0.25);
+      drawCrack(bx, by, bAngle, bLen, bWidth, depth + 1);
     }
   }
 
-  // Seed cracks from random positions around the canvas
   for (let i = 0; i < NUM_CRACKS; i++) {
     const x      = Math.random() * canvas.width;
     const y      = Math.random() * canvas.height;
     const angle  = Math.random() * Math.PI * 2;
-    const length = 120 + Math.random() * 220;
-    const width  = 1.2 + Math.random() * 1.0;
+    const length = 180 + Math.random() * 280;
+    // Bold variation: some cracks are chunky (4–6px), some hairline (1–2px)
+    const width  = Math.random() < 0.4
+                   ? 3.5 + Math.random() * 2.5   // bold crack
+                   : 0.8 + Math.random() * 1.2;  // fine crack
     drawCrack(x, y, angle, length, width, 0);
   }
 }
 
 drawKintsugi();
 window.addEventListener("resize", drawKintsugi);
-gsap.registerPlugin(ScrollTrigger);
 
 /* ===========================
    CUSTOM CURSOR
