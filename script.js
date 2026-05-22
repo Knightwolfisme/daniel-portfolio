@@ -1,3 +1,80 @@
+/* ===========================
+   KINTSUGI BACKGROUND
+   Generative gold crack pattern on canvas.
+   Runs once on load, redraws on resize.
+=========================== */
+function drawKintsugi() {
+  const canvas = document.getElementById("kintsugi-bg");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const GOLD        = "#c9a84c";
+  const GLOW_COLOR  = "rgba(201, 168, 76, 0.4)";
+  const NUM_CRACKS  = 6;   // main crack origins
+  const MAX_DEPTH   = 4;   // branching depth
+
+  function drawCrack(x, y, angle, length, width, depth) {
+    if (depth > MAX_DEPTH || length < 8) return;
+
+    // Organic jitter along the path
+    const segments = Math.floor(length / 12);
+    const segLen   = length / segments;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
+    let cx = x, cy = y, a = angle;
+    for (let i = 0; i < segments; i++) {
+      a += (Math.random() - 0.5) * 0.45;   // slight direction wander
+      cx += Math.cos(a) * segLen;
+      cy += Math.sin(a) * segLen;
+      ctx.lineTo(cx, cy);
+    }
+
+    // Glow pass
+    ctx.shadowColor  = GLOW_COLOR;
+    ctx.shadowBlur   = 8;
+    ctx.strokeStyle  = GOLD;
+    ctx.lineWidth    = width;
+    ctx.lineCap      = "round";
+    ctx.lineJoin     = "round";
+    ctx.globalAlpha  = 0.55 + Math.random() * 0.3;
+    ctx.stroke();
+
+    // Reset shadow for sub-cracks
+    ctx.shadowBlur  = 0;
+    ctx.globalAlpha = 1;
+
+    // Branch 1–2 times along this crack
+    const branches = depth < 2 ? 2 : 1;
+    for (let b = 0; b < branches; b++) {
+      const t        = 0.35 + Math.random() * 0.45;
+      const bx       = x + Math.cos(a) * length * t;
+      const by       = y + Math.sin(a) * length * t;
+      const bAngle   = a + (Math.random() > 0.5 ? 1 : -1) * (0.4 + Math.random() * 0.5);
+      const bLength  = length * (0.45 + Math.random() * 0.3);
+      const bWidth   = width * 0.6;
+      drawCrack(bx, by, bAngle, bLength, bWidth, depth + 1);
+    }
+  }
+
+  // Seed cracks from random positions around the canvas
+  for (let i = 0; i < NUM_CRACKS; i++) {
+    const x      = Math.random() * canvas.width;
+    const y      = Math.random() * canvas.height;
+    const angle  = Math.random() * Math.PI * 2;
+    const length = 120 + Math.random() * 220;
+    const width  = 1.2 + Math.random() * 1.0;
+    drawCrack(x, y, angle, length, width, 0);
+  }
+}
+
+drawKintsugi();
+window.addEventListener("resize", drawKintsugi);
 gsap.registerPlugin(ScrollTrigger);
 
 /* ===========================
