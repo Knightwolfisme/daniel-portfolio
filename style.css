@@ -49,6 +49,12 @@ body::after {
   left: var(--cx, 50%);
 }
 
+/* Hide cursor on touch devices — both rules for max browser support */
+@media (hover: none), (pointer: coarse) {
+  body::after { display: none; }
+  body { cursor: auto; }
+}
+
 .section-label {
   display: block;
   font-family: var(--font-body);
@@ -69,15 +75,14 @@ body::after {
   position: relative;
 }
 
-.hero-bg-grid {
+#kintsugi-bg {
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 0;
+  opacity: 0.6;
 }
 
 .hero-content {
