@@ -324,7 +324,6 @@ body::after {
   background-position: center;
 }
 
-/* Dark overlay so text stays readable over the image */
 .project::after {
   content: '';
   position: absolute;
@@ -338,8 +337,15 @@ body::after {
   z-index: 0;
 }
 
-.project > * {
+.project h3,
+.project p,
+.project .proj-link {
   position: relative;
+  z-index: 1;
+}
+
+.proj-num {
+  position: absolute;
   z-index: 1;
 }
 
