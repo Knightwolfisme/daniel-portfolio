@@ -1,0 +1,10 @@
+/* PROJECT HUD — turns each card into a readable system record */
+.project-card-glass { position:relative; }
+.project-card-glass::after { position:absolute; left:1.65rem; top:1.65rem; z-index:5; font-family:var(--font-mono); font-size:.58rem; letter-spacing:.14em; color:rgba(247,226,154,.5); padding:.42rem .55rem; border:1px solid rgba(201,168,76,.16); background:rgba(6,6,8,.38); backdrop-filter:blur(8px); }
+.project-card:nth-child(1) .project-card-glass::after { content:'01 / 04  •  COMPUTER VISION'; }
+.project-card:nth-child(2) .project-card-glass::after { content:'02 / 04  •  AUTONOMOUS FLIGHT'; }
+.project-card:nth-child(3) .project-card-glass::after { content:'03 / 04  •  SYSTEMS SOFTWARE'; }
+.project-card:nth-child(4) .project-card-glass::after { content:'04 / 04  •  EMBEDDED CONTROL'; }
+.project-card .proj-badge { letter-spacing:.08em; }
+.project-card .project-meta-pill { border-color:rgba(201,168,76,.18); background:rgba(6,6,8,.45); font-family:var(--font-mono); letter-spacing:.04em; }
+@media (max-width:800px) { .project-card-glass::after { left:1.15rem; top:1.15rem; max-width:70%; line-height:1.4; } }
