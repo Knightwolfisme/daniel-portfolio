@@ -1,0 +1,243 @@
+/* =========================================================
+   PROJECTS — CHAPTERD CINEMATIC SHOWCASE
+   Additive refinement: keeps the existing horizontal engine,
+   but turns each project into a distinct case-file scene.
+========================================================= */
+
+.projects {
+  position: relative;
+  isolation: isolate;
+}
+
+.projects::before {
+  content: 'CASE FILES / AUTONOMOUS SYSTEMS / 2026';
+  position: absolute;
+  top: 5.25rem;
+  right: 5vw;
+  z-index: 5;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  letter-spacing: .16em;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.projects::after {
+  content: '';
+  position: absolute;
+  left: 5vw;
+  right: 5vw;
+  bottom: 1.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), rgba(201,168,76,.08) 35%, rgba(201,168,76,.08) 65%, transparent);
+  opacity: .5;
+  pointer-events: none;
+}
+
+.projects-header-wrap {
+  position: relative;
+  z-index: 8;
+}
+
+.projects-instruction {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .45rem .7rem;
+  border: 1px solid var(--border-dim);
+  background: rgba(6,6,8,.5);
+  backdrop-filter: blur(10px);
+}
+
+.drag-icon {
+  color: var(--gold-bright);
+  font-family: var(--font-mono);
+}
+
+.projects-viewport {
+  position: relative;
+}
+
+.projects-container {
+  align-items: stretch;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-left: 8vw;
+  padding-right: 8vw;
+}
+
+.project-card {
+  position: relative;
+  overflow: hidden;
+  width: min(78vw, 980px);
+  min-width: min(78vw, 980px);
+  height: 62vh;
+  min-height: 500px;
+  border-color: rgba(201,168,76,.25);
+  background: rgba(9,9,12,.88);
+  box-shadow: 0 30px 90px rgba(0,0,0,.72), inset 0 0 0 1px rgba(255,255,255,.018);
+  transform-origin: center center;
+}
+
+/* A quiet technical frame around every case file. */
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(201,168,76,.09);
+  border-radius: inherit;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(6,6,8,.78));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.project-card-glass {
+  opacity: .78;
+}
+
+.project-top-row {
+  position: relative;
+  z-index: 6;
+  padding: 1.5rem 1.65rem 0;
+}
+
+.proj-num {
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  line-height: .8;
+  color: rgba(247,226,154,.16);
+  text-shadow: 0 0 35px rgba(201,168,76,.08);
+}
+
+.project-content {
+  position: absolute;
+  left: 1.65rem;
+  right: 1.65rem;
+  bottom: 1.65rem;
+  z-index: 7;
+  max-width: 760px;
+}
+
+.proj-tags {
+  margin-bottom: .85rem;
+}
+
+.project-title {
+  max-width: 760px;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: .95;
+  text-wrap: balance;
+  text-shadow: 0 8px 30px rgba(0,0,0,.65);
+}
+
+.project-desc {
+  max-width: 690px;
+  margin-top: .9rem;
+  color: rgba(243,240,232,.78);
+  font-size: .95rem;
+}
+
+.project-actions {
+  margin-top: 1.15rem;
+}
+
+/* Distinctive case-file spine on the right edge. */
+.project-card .project-top-row::after {
+  content: 'CASE / 01';
+  position: absolute;
+  right: 1.65rem;
+  top: 1.65rem;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  letter-spacing: .18em;
+  color: rgba(247,226,154,.45);
+  padding-left: .55rem;
+  border-left: 1px solid rgba(201,168,76,.25);
+}
+
+.project-card:nth-child(2) .project-top-row::after { content: 'CASE / 02'; }
+.project-card:nth-child(3) .project-top-row::after { content: 'CASE / 03'; }
+.project-card:nth-child(4) .project-top-row::after { content: 'CASE / 04'; }
+
+/* Turn the procedural backdrops into visual "systems" rather than decoration. */
+.project-cyber-backdrop {
+  opacity: .9;
+  transform: scale(1.02);
+  transition: transform 1.2s cubic-bezier(.16,1,.3,1), opacity .6s ease;
+}
+
+.project-card:hover .project-cyber-backdrop {
+  transform: scale(1.06);
+  opacity: 1;
+}
+
+/* A small case-file metadata rail that does not require new content. */
+.project-card .project-actions::before {
+  content: 'SYSTEM DOCUMENTATION  /  OPEN RECORD';
+  display: block;
+  margin-bottom: .65rem;
+  font-family: var(--font-mono);
+  font-size: .56rem;
+  letter-spacing: .15em;
+  color: var(--text-faint);
+}
+
+/* Give the horizontal sequence a sense of arrival/departure. */
+.project-card:first-child {
+  margin-left: 2vw;
+}
+
+.project-card:last-child {
+  margin-right: 2vw;
+}
+
+@media (max-width: 800px) {
+  .projects::before { display: none; }
+
+  .projects::after {
+    left: 6vw;
+    right: 6vw;
+    bottom: 1rem;
+  }
+
+  .projects-container {
+    gap: 1.25rem;
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+
+  .project-card {
+    width: 88vw;
+    min-width: 88vw;
+    height: 68vh;
+    min-height: 520px;
+  }
+
+  .project-card::before { inset: 9px; }
+
+  .project-top-row {
+    padding: 1.15rem 1.15rem 0;
+  }
+
+  .project-content {
+    left: 1.15rem;
+    right: 1.15rem;
+    bottom: 1.15rem;
+  }
+
+  .project-card .project-top-row::after {
+    right: 1.15rem;
+    top: 1.2rem;
+  }
+}
