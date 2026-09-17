@@ -1,0 +1,19 @@
+/* PROJECT DOSSIER — deeper case-study treatment */
+.modal-window { border-color: rgba(201,168,76,.28); box-shadow: 0 35px 120px rgba(0,0,0,.78),0 0 70px rgba(201,168,76,.045),inset 0 1px 0 rgba(255,255,255,.035); }
+.modal-header { position:relative; padding-bottom:2rem; border-bottom:1px solid rgba(201,168,76,.13); }
+.modal-header::after { content:'ENGINEERING DOSSIER / REV. 2026'; position:absolute; right:0; bottom:.55rem; font-family:var(--font-mono); font-size:.55rem; letter-spacing:.15em; color:var(--text-faint); }
+.modal-title { max-width:850px; text-wrap:balance; }
+.modal-section { position:relative; }
+.modal-section + .modal-section { margin-top:2.75rem; padding-top:2.25rem; border-top:1px solid rgba(255,255,255,.055); }
+.modal-tech-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1px; background:rgba(201,168,76,.11); border:1px solid rgba(201,168,76,.11); counter-reset:tech; }
+.modal-tech-item { position:relative; min-height:150px; padding:1.25rem 1.25rem 1.25rem 4.1rem; background:rgba(10,10,14,.9); transition:background .25s ease,transform .25s ease; }
+.modal-tech-item::before { counter-increment:tech; content:'0' counter(tech); position:absolute; left:1.15rem; top:1.25rem; font-family:var(--font-mono); font-size:.65rem; color:var(--gold); letter-spacing:.08em; }
+.modal-tech-item::after { content:''; position:absolute; left:1.2rem; top:2.45rem; width:1.25rem; height:1px; background:rgba(201,168,76,.4); }
+.modal-tech-item:hover { background:rgba(201,168,76,.045); transform:translateY(-2px); }
+.modal-tech-item h5 { font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; }
+.modal-tech-item p { margin-top:.55rem; color:var(--text-muted); font-size:.86rem; line-height:1.65; }
+.modal-bullet-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.75rem; list-style:none; }
+.modal-bullet-list li { position:relative; padding:1rem 1rem 1rem 2.2rem; border:1px solid rgba(201,168,76,.12); background:rgba(201,168,76,.025); color:var(--text-light); font-size:.83rem; }
+.modal-bullet-list li::before { content:'✓'; position:absolute; left:.85rem; top:1rem; color:var(--gold-bright); font-family:var(--font-mono); }
+.project-card:focus-within { border-color:rgba(223,190,101,.55); box-shadow:0 35px 100px rgba(0,0,0,.78),0 0 45px rgba(201,168,76,.11); }
+@media (max-width:800px) { .modal-tech-list,.modal-bullet-list { grid-template-columns:1fr; } .modal-header::after { position:static; display:block; margin-top:1rem; } }
