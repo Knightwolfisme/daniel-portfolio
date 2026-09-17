@@ -2,28 +2,46 @@
    INTERACTION FIXES — PROJECTS / MODAL / CUSTOM CURSOR
    ========================================================= */
 
-/* Make the real project photographs the primary visual layer.
-   The inline --proj-img value already exists on the image-backed cards. */
+/* Keep real project photography on the card itself. The previous pass
+   placed the photo on the glass overlay, which made the procedural layers
+   and contrast treatment fight with the source image. */
+.project-card {
+  background-image: var(--proj-img, none);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Deliberate focal points for the supplied project photography. */
+.project-card[data-project-id="aero-ops"] {
+  background-position: center 52%;
+}
+
+.project-card[data-project-id="isro-iroc"] {
+  background-position: center 48%;
+}
+
+.project-card[data-project-id="micromouse"] {
+  background-position: center center;
+}
+
+/* The glass layer is contrast only; it no longer owns the image. */
 .project-card-glass {
-  background-image:
+  background:
     linear-gradient(
       to top,
       rgba(6, 6, 8, 0.96) 0%,
       rgba(8, 8, 12, 0.62) 46%,
-      rgba(6, 6, 8, 0.20) 100%
-    ),
-    var(--proj-img, none);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.94;
+      rgba(6, 6, 8, 0.18) 100%
+    );
+  opacity: 1;
 }
 
-/* Remove the vertical CASE / 0X spine. It competed with the project
-   content and read like an extra navigation rail rather than metadata. */
-.project-card .project-top-row::after {
-  content: none !important;
-  display: none !important;
+/* Real photography is the primary visual. Disable the procedural fallback
+   on cards that already have an image so patterns cannot obscure it. */
+.project-card[data-project-id="aero-ops"] .project-cyber-backdrop,
+.project-card[data-project-id="isro-iroc"] .project-cyber-backdrop,
+.project-card[data-project-id="micromouse"] .project-cyber-backdrop {
+  opacity: 0;
 }
 
 /* The dossier remains scrollable, but its browser scrollbar is invisible. */
@@ -38,16 +56,25 @@
   display: none;
 }
 
-/* The ring is the pointer. Never fall back to the browser's arrow/hand
-   while the custom desktop cursor is active. */
+/* Use the custom cursor instead of the native Windows pointer on desktop. */
 html,
 body,
 body * {
   cursor: none !important;
 }
 
+/* The centre dot is intentional: it anchors the ring while the ring is the
+   only element that expands over interactive targets. */
 .cursor-dot {
-  display: none !important;
+  display: block !important;
+  width: 5px;
+  height: 5px;
+  opacity: 1;
+  z-index: 100001;
+  background: var(--gold-bright);
+  border: 1px solid rgba(247, 226, 154, 0.85);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.42);
 }
 
 .cursor-ring {
@@ -82,14 +109,7 @@ body * {
 }
 
 @media (max-width: 800px) {
-  .project-card-glass {
-    background-image:
-      linear-gradient(
-        to top,
-        rgba(6, 6, 8, 0.97) 0%,
-        rgba(8, 8, 12, 0.68) 48%,
-        rgba(6, 6, 8, 0.24) 100%
-      ),
-      var(--proj-img, none);
+  .project-card {
+    background-position: center center;
   }
 }
