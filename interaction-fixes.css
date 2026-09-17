@@ -3,117 +3,114 @@
    ========================================================= */
 
 /* ---------------------------------------------------------
-   PROJECT IMAGES + FULL-CARD GLASS
+   PROJECT IMAGES — PHOTOGRAPHY FIRST
    --------------------------------------------------------- */
 .project-card {
-  background-image: var(--proj-img, none);
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-image: var(--proj-img, none) !important;
+  background-repeat: no-repeat !important;
+  background-size: 118% 118% !important;
+  background-color: #0a0a0d;
 }
 
 .project-card[data-project-id="aero-ops"] {
-  background-position: center 52%;
+  background-position: center 56% !important;
 }
 
 .project-card[data-project-id="isro-iroc"] {
-  background-position: center 48%;
+  background-position: center 50% !important;
 }
 
 .project-card[data-project-id="micromouse"] {
-  background-position: center center;
+  background-position: center 50% !important;
 }
 
-/* One continuous glass treatment across the complete card. */
+/* No glass layer. The photograph itself is the surface. */
 .project-card-glass {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 2 !important;
-  display: block !important;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(5, 5, 8, 0.20) 0%,
-      rgba(6, 6, 9, 0.40) 38%,
-      rgba(6, 6, 9, 0.74) 72%,
-      rgba(5, 5, 8, 0.90) 100%
-    ) !important;
-  opacity: 1 !important;
-  pointer-events: none !important;
-  border-radius: inherit;
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-/* Real photography is primary; procedural patterns are only fallbacks. */
+/* Remove the separate bottom gradient from the refinement layer too. */
+.project-card::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+/* Keep only the quiet technical frame. */
+.project-card::before {
+  z-index: 1 !important;
+  border-color: rgba(201, 168, 76, 0.11) !important;
+}
+
+/* Procedural patterns stay out when real photography exists. */
 .project-card[data-project-id="aero-ops"] .project-cyber-backdrop,
 .project-card[data-project-id="isro-iroc"] .project-cyber-backdrop,
 .project-card[data-project-id="micromouse"] .project-cyber-backdrop {
-  opacity: 0;
+  opacity: 0 !important;
 }
 
 /* ---------------------------------------------------------
    PROJECT CARD INFORMATION HIERARCHY
    --------------------------------------------------------- */
-
-/* The giant number and vertical CASE spine duplicate information already
-   carried by the compact HUD label. Remove both sources of clutter. */
 .project-card .proj-num,
 .project-card .project-top-row::after {
   display: none !important;
   content: none !important;
 }
 
-/* Compact HUD record: one useful identifier. */
+.project-card .project-top-row {
+  position: relative;
+  z-index: 6;
+}
+
 .project-card-glass::after {
-  left: 1.65rem;
-  top: 1.65rem;
-  color: rgba(247, 226, 154, 0.7);
-  background: rgba(5, 5, 8, 0.72);
-  border-color: rgba(201, 168, 76, 0.24);
-  backdrop-filter: blur(10px);
+  display: none !important;
+  content: none !important;
 }
 
-/* IMPORTANT: there is NO second glass/card behind the project copy.
-   Explicitly neutralize every visual property so older refinement rules
-   cannot create the rounded dark rectangle seen in earlier renders. */
-.project-card .project-content,
-.project-card .project-content::before,
-.project-card .project-content::after {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
+/* Content is transparent: no second panel, no glass-on-glass. */
+.project-content,
 .project-card .project-content {
   position: absolute !important;
   left: 1.65rem !important;
   right: 1.65rem !important;
   bottom: 1.65rem !important;
   z-index: 7 !important;
-  padding: 0 !important;
   max-width: 760px;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
 }
 
 .project-title {
   color: #fff;
-  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.82);
+  text-shadow:
+    0 3px 3px rgba(0, 0, 0, 0.95),
+    0 6px 18px rgba(0, 0, 0, 0.85);
 }
 
 .project-desc {
-  color: rgba(247, 245, 239, 0.90);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.78);
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.95),
+    0 4px 12px rgba(0, 0, 0, 0.85);
   margin-bottom: 1.15rem;
 }
 
 .proj-tags .tag {
   background: rgba(5, 5, 8, 0.78);
   border-color: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
 }
 
-/* The record, CTA and venue have fixed roles in one clean row. */
 .project-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -131,7 +128,8 @@
   font-size: 0.55rem;
   line-height: 1.4;
   letter-spacing: 0.12em;
-  color: var(--text-faint);
+  color: rgba(255, 255, 255, 0.52);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -150,10 +148,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0.38rem 0.6rem;
-  border: 1px solid rgba(201, 168, 76, 0.18);
-  background: rgba(5, 5, 8, 0.55);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  background: rgba(5, 5, 8, 0.58);
   border-radius: 4px;
-  color: rgba(247, 245, 239, 0.66);
+  color: rgba(247, 245, 239, 0.78);
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.03em;
@@ -226,21 +224,15 @@ body * {
 
 @media (max-width: 800px) {
   .project-card {
-    background-position: center center;
+    background-size: 112% 112% !important;
+    background-position: center center !important;
   }
 
-  .project-card-glass::after {
-    left: 1.15rem;
-    top: 1.15rem;
-    max-width: 70%;
-    line-height: 1.4;
-  }
-
+  .project-content,
   .project-card .project-content {
     left: 1.15rem !important;
     right: 1.15rem !important;
     bottom: 1.15rem !important;
-    padding: 0 !important;
   }
 
   .project-actions {
