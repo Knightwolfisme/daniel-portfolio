@@ -1,0 +1,116 @@
+/* =========================================================
+   DANIEL SHAJU — VISUAL REFINEMENT LAYER
+   Safe additive layer. Loaded after the untouched stable base.
+========================================================= */
+
+/* Sharper glass surfaces without changing layout geometry */
+.nav-container {
+  background: linear-gradient(135deg, rgba(18,18,24,.78), rgba(9,9,12,.64));
+  box-shadow: 0 18px 50px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.nav-link::after {
+  box-shadow: 0 0 10px rgba(201,168,76,.45);
+}
+
+/* More dimensional hero lighting, entirely behind existing content */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 8% 4% auto;
+  height: 70%;
+  background:
+    radial-gradient(circle at 18% 42%, rgba(201,168,76,.10), transparent 28%),
+    radial-gradient(circle at 82% 30%, rgba(201,168,76,.055), transparent 25%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 42vw;
+  height: 42vw;
+  max-width: 620px;
+  max-height: 620px;
+  right: -18vw;
+  top: 18%;
+  border: 1px solid rgba(201,168,76,.08);
+  border-radius: 50%;
+  box-shadow: 0 0 90px rgba(201,168,76,.035), inset 0 0 90px rgba(201,168,76,.02);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Give section boundaries a subtle engineered rhythm */
+.about,
+.skills,
+.achievements,
+.contact {
+  background-image:
+    linear-gradient(90deg, transparent 0, rgba(201,168,76,.018) 50%, transparent 100%),
+    linear-gradient(180deg, rgba(255,255,255,.008), transparent 20%);
+}
+
+.section-label {
+  box-shadow: inset 0 0 18px rgba(201,168,76,.025);
+}
+
+/* Refine cards without altering their sizing */
+.pillar-card,
+.skill-card,
+.timeline-content,
+.social-card,
+.email-action-box,
+.badge-item {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 12px 32px rgba(0,0,0,.14);
+}
+
+.pillar-card:hover,
+.skill-card:hover,
+.timeline-item:hover .timeline-content,
+.social-card:hover {
+  box-shadow: 0 18px 42px rgba(0,0,0,.32), 0 0 28px rgba(201,168,76,.08);
+}
+
+/* Project cards get a restrained cinematic edge */
+.project-card {
+  box-shadow: 0 24px 60px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.035), transparent 28%, transparent 72%, rgba(201,168,76,.035));
+  z-index: 4;
+}
+
+/* Cleaner keyboard accessibility */
+:focus-visible {
+  outline: 1px solid var(--gold-bright);
+  outline-offset: 4px;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Keep the new decorative ring restrained on small screens */
+@media (max-width: 768px) {
+  .hero::after {
+    width: 70vw;
+    height: 70vw;
+    right: -34vw;
+    top: 24%;
+  }
+}
