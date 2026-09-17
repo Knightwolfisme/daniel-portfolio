@@ -3,7 +3,7 @@
    ========================================================= */
 
 /* ---------------------------------------------------------
-   PROJECT IMAGES
+   PROJECT IMAGES + FULL-CARD GLASS
    --------------------------------------------------------- */
 .project-card {
   background-image: var(--proj-img, none);
@@ -23,16 +23,23 @@
   background-position: center center;
 }
 
-/* One continuous glass treatment across the entire card. */
+/* One continuous glass treatment across the complete card. */
 .project-card-glass {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  display: block !important;
   background:
     linear-gradient(
-      to top,
-      rgba(5, 5, 8, 0.97) 0%,
-      rgba(6, 6, 9, 0.84) 48%,
-      rgba(6, 6, 9, 0.42) 100%
-    );
-  opacity: 1;
+      to bottom,
+      rgba(5, 5, 8, 0.20) 0%,
+      rgba(6, 6, 9, 0.40) 38%,
+      rgba(6, 6, 9, 0.74) 72%,
+      rgba(5, 5, 8, 0.90) 100%
+    ) !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  border-radius: inherit;
 }
 
 /* Real photography is primary; procedural patterns are only fallbacks. */
@@ -46,15 +53,15 @@
    PROJECT CARD INFORMATION HIERARCHY
    --------------------------------------------------------- */
 
-/* The extra giant number and vertical CASE spine duplicate information
-   already carried by the compact HUD label. Remove both sources of clutter. */
+/* The giant number and vertical CASE spine duplicate information already
+   carried by the compact HUD label. Remove both sources of clutter. */
 .project-card .proj-num,
 .project-card .project-top-row::after {
   display: none !important;
   content: none !important;
 }
 
-/* Compact HUD record: one useful identifier, not another visual layer. */
+/* Compact HUD record: one useful identifier. */
 .project-card-glass::after {
   left: 1.65rem;
   top: 1.65rem;
@@ -64,29 +71,39 @@
   backdrop-filter: blur(10px);
 }
 
-/* Content sits directly on the card. The full-card glass treatment above
-   provides the readability layer; there should be no second rectangle here. */
-.project-content {
-  left: auto;
-  right: auto;
-  bottom: auto;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  box-shadow: none;
+/* IMPORTANT: there is NO second glass/card behind the project copy.
+   Explicitly neutralize every visual property so older refinement rules
+   cannot create the rounded dark rectangle seen in earlier renders. */
+.project-card .project-content,
+.project-card .project-content::before,
+.project-card .project-content::after {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.project-card .project-content {
+  position: absolute !important;
+  left: 1.65rem !important;
+  right: 1.65rem !important;
+  bottom: 1.65rem !important;
+  z-index: 7 !important;
+  padding: 0 !important;
+  max-width: 760px;
 }
 
 .project-title {
   color: #fff;
-  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.82);
 }
 
 .project-desc {
-  color: rgba(247, 245, 239, 0.88);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  color: rgba(247, 245, 239, 0.90);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.78);
   margin-bottom: 1.15rem;
 }
 
@@ -96,8 +113,7 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* The record, CTA and venue now have fixed roles in one clean row.
-   This prevents the pseudo-element, button and metadata pill from colliding. */
+/* The record, CTA and venue have fixed roles in one clean row. */
 .project-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -220,11 +236,11 @@ body * {
     line-height: 1.4;
   }
 
-  .project-content {
-    left: auto;
-    right: auto;
-    bottom: auto;
-    padding: 0;
+  .project-card .project-content {
+    left: 1.15rem !important;
+    right: 1.15rem !important;
+    bottom: 1.15rem !important;
+    padding: 0 !important;
   }
 
   .project-actions {
